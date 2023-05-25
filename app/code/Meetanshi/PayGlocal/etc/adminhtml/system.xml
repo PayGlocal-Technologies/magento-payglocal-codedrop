@@ -82,12 +82,12 @@
                         <field id="mode">0</field>
                     </depends>
                 </field>
-                <field id="order_status" translate="label" type="select" sortOrder="170" showInDefault="1"
-                       showInWebsite="1" showInStore="0" canRestore="1">
-                    <label>New Order Status</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
+                <field id="iframe_width" translate="label" type="text" sortOrder="170" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Payment page width</label>
+                    <validate>validate-number validate-digits-range digits-range-350-450</validate>
+                    <comment>Width between 350-450</comment>
                 </field>
-
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="180" showInDefault="1"
                        showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Payment from Applicable Countries</label>

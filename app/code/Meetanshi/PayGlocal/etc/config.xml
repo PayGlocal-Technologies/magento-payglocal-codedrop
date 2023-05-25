@@ -10,6 +10,7 @@
                 <payment_action>authorize_capture</payment_action>
                 <order_status>processing</order_status>
                 <mode>1</mode>
+                <iframe_width>360</iframe_width>
                 <display_mode>modal</display_mode>
                 <sandbox_gateway_url>https://api.uat.payglocal.in/gl/v1/payments</sandbox_gateway_url>
                 <live_gateway_url>https://api.prod.payglocal.in/gl/v1/payments</live_gateway_url>

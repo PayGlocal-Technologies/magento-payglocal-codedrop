@@ -52,13 +52,7 @@ class Curl implements ClientInterface
 
             if ($finalResponce["status"] == "SENT_FOR_CAPTURE") {
 
-                $token = $finalResponce['x-gl-token'];
-                $dataNew = explode('.', $token);
-                $payloadNew = base64_decode($dataNew[1]);
-                $responseNew = json_decode($payloadNew, true);
-                $this->payglocalLogger->debug("Curl Responce XGL Decode", $responseNew);
-
-                $gid = $responseNew['x-gl-orderId'];
+                $gid = $finalResponce['gid'];
                 $curl = curl_init();
 
                 $url = $this->helper->getGatewayUrl() . "/" . $gid . '/status';

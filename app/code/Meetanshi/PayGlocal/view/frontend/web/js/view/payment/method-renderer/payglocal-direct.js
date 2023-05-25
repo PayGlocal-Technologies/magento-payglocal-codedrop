@@ -42,20 +42,26 @@ define(
             getPayGlocalInstructions: function () {
                 return window.checkoutConfig.payglocal_instructions;
             },
-
+            getIframWidth: function () {
+                return window.checkoutConfig.iframe_width;
+            },
             initialize: function () {
                 var self = this;
                 self._super();
+                var pMethod = quote.paymentMethod() ? quote.paymentMethod().method : null;
+                if(pMethod=="payglocal"){
+                    self.selectPaymentMethod();
+                }
                 return self;
             },
             loadPayGlocalJs: function (callback) {
                 var scriptEle = document.createElement("script");
                 scriptEle.setAttribute("src", window.checkoutConfig.payglocal_scriptUrl);
                 scriptEle.setAttribute("type", "text/javascript");
-                scriptEle.setAttribute("async", false);
+                scriptEle.setAttribute("defer", "");
                 scriptEle.setAttribute("data-display-mode", window.checkoutConfig.payglocal_mode);
                 scriptEle.setAttribute("data-cd-id", window.checkoutConfig.payglocal_cdid);
-                document.body.appendChild(scriptEle);
+                document.head.appendChild(scriptEle);
             },
 
             initObservable: function () {
@@ -79,38 +85,51 @@ define(
                 return data;
             },
             selectPaymentMethod: function () {
+                var self = this;
                 selectPaymentMethodAction(this.getData());
                 checkoutData.setSelectedPaymentMethod(this.item.method);
-
                 if (window.checkoutConfig.payglocal_mode == "inline") {
-                    jQuery("button.action.primary.checkout-payglocal").hide();
-                    jQuery("button.action.primary.checkout").show();
                     jQuery("#PayGlocal_payments iframe").remove();
+                    fullScreenLoader.startLoader(true);
+                    setTimeout(function () {
+                        self.displayPaymentPage();
+                        fullScreenLoader.stopLoader(true);
+                    }, 3000);
                 }
                 return true;
             },
             realPlaceOrder: function () {
                 var self = this;
+                this.isPlaceOrderActionAllowed(false);
                 this.getPlaceOrderDeferredObject()
                     .fail(
                         function () {
                             self.isPlaceOrderActionAllowed(true);
                             fullScreenLoader.stopLoader(true);
+                            self.displayPaymentPage();
                         }
                     ).done(
                     function () {
+                        self.isPlaceOrderActionAllowed(false);
                         self.afterPlaceOrder();
 
                         if (self.redirectAfterPlaceOrder) {
                             redirectOnSuccessAction.execute();
                         }
                     }
+                ).always(
+                    function () {
+                        self.isPlaceOrderActionAllowed(true);
+                    }
                 );
             },
             payResponce: function (data) {
                 payglocalResponce = data;
                 if (payglocalResponce.status == "SENT_FOR_CAPTURE") {
+                    this.isPlaceOrderActionAllowed(false);
                     this.realPlaceOrder();
+                }else{
+                    this.isPlaceOrderActionAllowed(true);
                 }
             },
             displayPaymentPage: function () {
@@ -129,12 +148,7 @@ define(
                                 message: response.message
                             });
                         } else {
-
                             window.PGPay.launchPayment({redirectUrl: response.redirectUrl}, self.payResponce.bind(self));
-                            if (window.checkoutConfig.payglocal_mode == "inline") {
-                                jQuery("button.action.primary.checkout-payglocal").show();
-                                jQuery("button.action.primary.checkout").hide();
-                            }
                         }
                     },
                     error: function (err) {
@@ -146,10 +160,7 @@ define(
                 });
 
             },
-            paymentSubmitStart: function (data, event) {
-                window.PGPay.handlePayNow(event);
-            },
-            tPlaceOrder: function () {
+            tPlaceOrder: function (data, event) {
                 var self = this;
                 if (event) {
                     event.preventDefault();
@@ -158,8 +169,11 @@ define(
                     additionalValidators.validate() &&
                     this.isPlaceOrderActionAllowed() === true
                 ) {
-                    fullScreenLoader.startLoader(true);
-                    self.displayPaymentPage();
+                    if (window.checkoutConfig.payglocal_mode == "inline") {
+                        window.PGPay.handlePayNow(event);
+                    }else{
+                        self.displayPaymentPage();
+                    }
                 }
                 return false;
             }

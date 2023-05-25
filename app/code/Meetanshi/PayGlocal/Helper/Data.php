@@ -39,6 +39,8 @@ class Data extends AbstractHelper
     const CONFIG_PAYGLOCAL_SANDBOX_GATEWAY_URL = 'payment/payglocal/sandbox_gateway_url';
     const CONFIG_PAYGLOCAL_LIVE_GATEWAY_URL = 'payment/payglocal/live_gateway_url';
 
+    const CONFIG_PAYGLOCAL_IFRAME_WIDTH = 'payment/payglocal/iframe_width';
+
     /**
      * @var EncryptorInterface
      */
@@ -133,6 +135,15 @@ class Data extends AbstractHelper
     public function getDisplayMode()
     {
         return $this->scopeConfig->getValue(self::CONFIG_PAYGLOCAL_DISPLAY_MODE,
+            ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIframeWidth()
+    {
+        return $this->scopeConfig->getValue(self::CONFIG_PAYGLOCAL_IFRAME_WIDTH,
             ScopeInterface::SCOPE_STORE);
     }
 

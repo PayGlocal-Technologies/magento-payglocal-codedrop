@@ -21,19 +21,7 @@
             <!--/ko-->
         </div>
 
-        <div id="PayGlocal_payments" data-width="360px"></div>
-        <div class="actions-toolbar">
-            <div class="primary">
-                <button class="action primary checkout-payglocal" style="display: none"
-                        type="submit"
-                        data-bind="
-                        click: paymentSubmitStart,
-                        attr: {title: $t('Proceed to Payment')}
-                        ">
-                    <span data-bind="text: $t('Proceed to Payment')"></span>
-                </button>
-            </div>
-        </div>
+        <div id="PayGlocal_payments" data-bind="attr: {'data-width': getIframWidth()}"></div>
 
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->

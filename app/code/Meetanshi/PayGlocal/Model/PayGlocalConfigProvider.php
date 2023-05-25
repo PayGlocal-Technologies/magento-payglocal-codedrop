@@ -60,6 +60,7 @@ class PayGlocalConfigProvider implements ConfigProviderInterface
         $config['payglocal_scriptUrl'] = $this->helper->getScriptUrl();
         $config['payglocal_cdid'] = $this->helper->getCdID();
         $config['payglocal_mode'] = $this->helper->getDisplayMode();
+        $config['iframe_width'] = $this->helper->getIframeWidth()."px";
 
         return $config;
     }
