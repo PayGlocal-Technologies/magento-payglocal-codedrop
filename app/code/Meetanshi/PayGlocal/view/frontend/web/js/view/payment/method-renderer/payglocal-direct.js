@@ -94,7 +94,7 @@ define(
                     setTimeout(function () {
                         self.displayPaymentPage();
                         fullScreenLoader.stopLoader(true);
-                    }, 3000);
+                    }, 500);
                 }
                 return true;
             },
@@ -134,6 +134,7 @@ define(
             },
             displayPaymentPage: function () {
                 var self = this;
+                fullScreenLoader.startLoader(true);
                 $.ajax({
                     type: 'GET',
                     data: {
@@ -142,7 +143,6 @@ define(
                     url: urlBuilder.build('payglocal/index/index'),
                     dataType: "json",
                     success: function (response) {
-                        fullScreenLoader.stopLoader(true);
                         if (response.hasOwnProperty('error')) {
                             messageContainer.addErrorMessage({
                                 message: response.message
@@ -150,6 +150,8 @@ define(
                         } else {
                             window.PGPay.launchPayment({redirectUrl: response.redirectUrl}, self.payResponce.bind(self));
                         }
+                        fullScreenLoader.stopLoader(true);
+
                     },
                     error: function (err) {
                         fullScreenLoader.stopLoader(true);
